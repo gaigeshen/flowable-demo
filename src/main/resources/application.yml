@@ -3,3 +3,16 @@ spring:
     url: jdbc:mysql://114.116.99.177:31001/demo
     username: root
     password: 123456
+flowable:
+  eventregistry:
+    enabled: false
+  content:
+    enabled: false
+  idm:
+    enabled: false
+  cmmn:
+    enabled: false
+  app:
+    enabled: false
+  dmn:
+    enabled: false
