@@ -7,7 +7,7 @@
 
         <startEvent id="startEvent">
             <extensionElements>
-                <flowable:formProperty id="employee" variable="employee" type="string" readable="true" writable="false" required="true"/>
+                <flowable:formProperty id="employee" variable="employee" type="string" readable="true" writable="true" required="true"/>
                 <flowable:formProperty id="type" variable="type" type="enum" readable="true" writable="true" required="true">
                     <flowable:value id="event" name="event" />
                     <flowable:value id="sick" name="sick" />
