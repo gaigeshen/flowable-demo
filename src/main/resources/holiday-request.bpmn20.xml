@@ -5,14 +5,30 @@
 
     <process id="holidayRequest" name="Holiday Request" isExecutable="true">
 
-        <startEvent id="startEvent"/>
+        <startEvent id="startEvent">
+            <extensionElements>
+                <flowable:formProperty id="employee" variable="employee" type="string" readable="true" writable="false" required="true"/>
+                <flowable:formProperty id="type" variable="type" type="enum" readable="true" writable="true" required="true">
+                    <flowable:value id="event" name="event" />
+                    <flowable:value id="sick" name="sick" />
+                </flowable:formProperty>
+                <flowable:formProperty id="nrOfHolidays" variable="nrOfHolidays" type="long" readable="true" writable="true" required="true"/>
+                <flowable:formProperty id="description" variable="description" type="string" readable="true" writable="true" required="false"/>
+            </extensionElements>
+        </startEvent>
         <sequenceFlow sourceRef="startEvent" targetRef="approveTask"/>
 
-        <userTask
-                id="approveTask"
-                name="Approve or reject request"
-                flowable:candidateGroups="managers"
-        />
+        <userTask id="approveTask" name="Approve or reject request" flowable:candidateGroups="managers">
+            <extensionElements>
+                <flowable:formProperty id="employee" variable="employee" type="string" readable="true" writable="false" required="true"/>
+                <flowable:formProperty id="type" variable="type" type="enum" readable="true" writable="false" required="true">
+                    <flowable:value id="event" name="event" />
+                    <flowable:value id="sick" name="sick" />
+                </flowable:formProperty>
+                <flowable:formProperty id="nrOfHolidays" variable="nrOfHolidays" type="long" readable="true" writable="false" required="true"/>
+                <flowable:formProperty id="description" variable="description" type="string" readable="true" writable="false" required="false"/>
+            </extensionElements>
+        </userTask>
 
         <sequenceFlow sourceRef="approveTask" targetRef="decision"/>
 
@@ -33,23 +49,25 @@
             </conditionExpression>
         </sequenceFlow>
 
-        <serviceTask
-                id="externalSystemCall"
-                name="Enter holidays in external system"
-                flowable:class="work.gaigeshen.flowable.demo.simple.CallExternalSystemDelegate"
-        />
+        <serviceTask id="externalSystemCall" name="Enter holidays in external system" flowable:class="work.gaigeshen.flowable.demo.simple.CallExternalSystemDelegate"/>
 
         <sequenceFlow sourceRef="externalSystemCall" targetRef="holidayApprovedTask"/>
 
-        <userTask id="holidayApprovedTask" name="Holiday approved" flowable:assignee="${employee}"/>
+        <userTask id="holidayApprovedTask" name="Holiday approved" flowable:assignee="${employee}">
+            <extensionElements>
+                <flowable:formProperty id="employee" variable="employee" type="string" readable="true" writable="false" required="true"/>
+                <flowable:formProperty id="type" variable="type" type="enum" readable="true" writable="false" required="true">
+                    <flowable:value id="event" name="event" />
+                    <flowable:value id="sick" name="sick" />
+                </flowable:formProperty>
+                <flowable:formProperty id="nrOfHolidays" variable="nrOfHolidays" type="long" readable="true" writable="false" required="true"/>
+                <flowable:formProperty id="description" variable="description" type="string" readable="true" writable="false" required="false"/>
+            </extensionElements>
+        </userTask>
 
         <sequenceFlow sourceRef="holidayApprovedTask" targetRef="approveEnd"/>
 
-        <serviceTask
-                id="sendRejectionMail"
-                name="Send out rejection email"
-                flowable:class="work.gaigeshen.flowable.demo.simple.SendRejectionMail"
-        />
+        <serviceTask id="sendRejectionMail" name="Send out rejection email" flowable:class="work.gaigeshen.flowable.demo.simple.SendRejectionMail"/>
 
         <sequenceFlow sourceRef="sendRejectionMail" targetRef="rejectEnd"/>
 

@@ -1,9 +1,12 @@
 package work.gaigeshen.flowable.demo.simple;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.flowable.engine.*;
+import org.flowable.engine.form.StartFormData;
+import org.flowable.engine.form.TaskFormData;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
-import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
@@ -31,21 +34,31 @@ public class HolidayRequest {
 
     RepositoryService repositoryService = processEngine.getRepositoryService();
 
-    Deployment deploy = repositoryService.createDeployment()
+    repositoryService.createDeployment()
             .addClasspathResource("holiday-request.bpmn20.xml")
             .deploy();
 
     ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
-            .deploymentId(deploy.getId())
+            .processDefinitionKey("holidayRequest")
             .singleResult();
 
     System.out.println("processDefinition = " + processDefinition);
+
+    FormService formService = processEngine.getFormService();
+
+    StartFormData startFormData = formService.getStartFormData(processDefinition.getId());
+
+    System.out.println("The form: \n" + ToStringBuilder.reflectionToString(startFormData, ToStringStyle.JSON_STYLE));
 
     Scanner scanner = new Scanner(System.in);
 
     System.out.println("Who are you?");
 
     String employee = scanner.nextLine();
+
+    System.out.println("What type holiday do you want to request? \n 1) event \n 2) sick");
+
+    String type = scanner.nextLine();
 
     System.out.println("How many days do you want to request?");
 
@@ -60,6 +73,7 @@ public class HolidayRequest {
     Map<String, Object> variables = new HashMap<>();
 
     variables.put("employee", employee);
+    variables.put("type", type);
     variables.put("nrOfHolidays", nrOfHolidays);
     variables.put("description", description);
 
@@ -82,8 +96,12 @@ public class HolidayRequest {
     Task task = tasks.get(taskIndex - 1);
 
     Map<String, Object> processVariables = taskService.getVariables(task.getId());
+    TaskFormData taskFormData = formService.getTaskFormData(task.getId());
 
-    System.out.println(processVariables.get("employee") + " wants " + processVariables.get("nrOfHolidays") + " of holidays. Do you approve it?");
+    System.out.println(processVariables.get("employee") + " wants "
+            + processVariables.get("nrOfHolidays") + " of holidays. Do you approve it?\n"
+            + ToStringBuilder.reflectionToString(taskFormData, ToStringStyle.JSON_STYLE));
+
 
     boolean approved = scanner.nextLine().equalsIgnoreCase("y");
 
@@ -94,7 +112,10 @@ public class HolidayRequest {
 
     Task afterApprovedTask = taskService.createTaskQuery().taskAssignee(employee).singleResult();
 
-    System.out.println(employee + " holiday request approved, now complete the task by myself");
+    TaskFormData afterApprovedTaskForm = formService.getTaskFormData(afterApprovedTask.getId());
+
+    System.out.println(employee + " holiday request approved, now complete the task by myself\n"
+            + ToStringBuilder.reflectionToString(afterApprovedTaskForm, ToStringStyle.JSON_STYLE));
 
     taskService.complete(afterApprovedTask.getId());
 
