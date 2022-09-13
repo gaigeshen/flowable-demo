@@ -21,11 +21,11 @@ public class HolidayRequest {
   public static void main(String[] args) {
     // 配置流程引擎使用的数据库和构建流程引擎
     ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration();
-    cfg.setJdbcUrl("jdbc:mysql://114.116.99.177:31001/demo");
+    cfg.setJdbcUrl("jdbc:mysql://192.168.1.140/unify-platform");
     cfg.setJdbcDriver("com.mysql.cj.jdbc.Driver");
-    cfg.setJdbcUsername("root");
-    cfg.setJdbcPassword("123456");
-    cfg.setDatabaseSchemaUpdate("drop-create");
+    cfg.setJdbcUsername("dev");
+    cfg.setJdbcPassword("dev@aek.com");
+    cfg.setDatabaseSchemaUpdate("true");
     ProcessEngine processEngine = cfg.buildProcessEngine();
 
     // 管理流程定义的资源库服务
@@ -35,7 +35,8 @@ public class HolidayRequest {
     FormService formService = processEngine.getFormService();
 
     // 部署请假流程定义
-    repositoryService.createDeployment().addClasspathResource("holiday-request.bpmn20.xml").deploy();
+    // repositoryService.createDeployment().addClasspathResource("holiday-request.bpmn20.xml").deploy();
+    repositoryService.createDeployment().addBpmnModel("holiday-request.bpmn20.xml", HolidayRequestBpmnModelCreator.create()).deploy();
 
     // 通过关键字查询请假的流程定义
     ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey("holidayRequest").singleResult();
