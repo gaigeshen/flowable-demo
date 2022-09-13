@@ -1,11 +1,11 @@
 package work.gaigeshen.flowable.demo.simple.form;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
+ *
  * @author gaigeshen
  */
 public class DefaultSelectionFormValueSource implements SelectionFormValueSource {
@@ -13,15 +13,17 @@ public class DefaultSelectionFormValueSource implements SelectionFormValueSource
     public static final DefaultSelectionFormValueSource INSTANCE = new DefaultSelectionFormValueSource();
 
     @Override
-    public List<Map<String, String>> getSource(String processDefinitionKey, String formPropertyId) {
-        Map<String, String> selection1 = new HashMap<>();
-        selection1.put("id", "id1");
-        selection1.put("name", "name1");
-
-        Map<String, String> selection2 = new HashMap<>();
-        selection2.put("id", "id2");
-        selection2.put("name", "name2");
-
-        return Arrays.asList(selection1, selection2);
+    public List<FormValueSource> getSource(String processDefinitionKey, String formPropertyId) {
+        if ("multiSelection".equals(formPropertyId)) {
+            return Arrays.asList(
+                    new DefaultFormValueSource("multiSelection1", "multiSelection1"),
+                    new DefaultFormValueSource("multiSelection2", "multiSelection2"));
+        }
+        else if ("singleSelection".equals(formPropertyId)) {
+            return Arrays.asList(
+                    new DefaultFormValueSource("singleSelection1", "singleSelection1"),
+                    new DefaultFormValueSource("singleSelection2", "singleSelection2"));
+        }
+        return Collections.emptyList();
     }
 }
