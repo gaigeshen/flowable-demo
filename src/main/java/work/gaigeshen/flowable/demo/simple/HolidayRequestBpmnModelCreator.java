@@ -130,17 +130,17 @@ public class HolidayRequestBpmnModelCreator {
         approveTaskToDecision.setTargetRef("decision");
         process.addFlowElement(approveTaskToDecision);
 
-        SequenceFlow decisionToExternalSystemCall = new SequenceFlow();
-        decisionToExternalSystemCall.setSourceRef("decision");
-        decisionToExternalSystemCall.setTargetRef("externalSystemCall");
-        decisionToExternalSystemCall.setConditionExpression("${approved}");
-        process.addFlowElement(decisionToExternalSystemCall);
-
         SequenceFlow decisionToSendRejectionMail = new SequenceFlow();
         decisionToSendRejectionMail.setSourceRef("decision");
         decisionToSendRejectionMail.setTargetRef("sendRejectionMail");
-        decisionToSendRejectionMail.setConditionExpression("${!approved}");
+        decisionToSendRejectionMail.setConditionExpression("${nrOfHolidays > 14}");
         process.addFlowElement(decisionToSendRejectionMail);
+
+        SequenceFlow decisionToExternalSystemCall = new SequenceFlow();
+        decisionToExternalSystemCall.setSourceRef("decision");
+        decisionToExternalSystemCall.setTargetRef("externalSystemCall");
+        decisionToExternalSystemCall.setConditionExpression("${nrOfHolidays > 1}");
+        process.addFlowElement(decisionToExternalSystemCall);
 
         SequenceFlow externalSystemCallToHolidayApprovedTask = new SequenceFlow();
         externalSystemCallToHolidayApprovedTask.setSourceRef("externalSystemCall");

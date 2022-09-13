@@ -39,7 +39,7 @@ public class HolidayRequest {
     repositoryService.createDeployment().addBpmnModel("holiday-request.bpmn20.xml", HolidayRequestBpmnModelCreator.create()).deploy();
 
     // 通过关键字查询请假的流程定义
-    ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey("holidayRequest").singleResult();
+    ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey("holidayRequest").latestVersion().singleResult();
 
     // 开始流程之前展示流程表单让用户输入
     StartFormData startFormData = formService.getStartFormData(processDefinition.getId());
