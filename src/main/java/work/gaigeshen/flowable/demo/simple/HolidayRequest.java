@@ -9,6 +9,10 @@ import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
+import work.gaigeshen.flowable.demo.json.JsonCodec;
+import work.gaigeshen.flowable.demo.simple.form.DateDurationFormType;
+import work.gaigeshen.flowable.demo.simple.form.MultiSelectionFormType;
+import work.gaigeshen.flowable.demo.simple.form.SingleSelectionFormType;
 
 import java.util.*;
 
@@ -20,12 +24,16 @@ public class HolidayRequest {
 
   public static void main(String[] args) {
     // 配置流程引擎使用的数据库和构建流程引擎
-    ProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration();
+    StandaloneProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration();
     cfg.setJdbcUrl("jdbc:mysql://192.168.1.140/unify-platform");
     cfg.setJdbcDriver("com.mysql.cj.jdbc.Driver");
     cfg.setJdbcUsername("dev");
     cfg.setJdbcPassword("dev@aek.com");
     cfg.setDatabaseSchemaUpdate("true");
+
+    cfg.setCustomFormTypes(Arrays.asList(SingleSelectionFormType.INSTANCE, MultiSelectionFormType.INSTANCE,
+            DateDurationFormType.INSTANCE));
+
     ProcessEngine processEngine = cfg.buildProcessEngine();
 
     // 管理流程定义的资源库服务
@@ -45,7 +53,7 @@ public class HolidayRequest {
     StartFormData startFormData = formService.getStartFormData(processDefinition.getId());
     System.out.println("the form for input:");
     for (FormProperty formProperty : startFormData.getFormProperties()) {
-      System.out.println(formProperty.getId() + " = " + formProperty.getValue() + " (" + formProperty.getType() + ")");
+      System.out.println(formProperty.getId() + " = " + formProperty.getValue() + " (" + formProperty.getType() + ") ");
     }
 
     // 模拟收集用户输入的表单数据
@@ -66,6 +74,30 @@ public class HolidayRequest {
     formProperties.put("type", type);
     formProperties.put("nrOfHolidays", nrOfHolidays + "");
     formProperties.put("description", description);
+
+    Map<String, Object> dateDuration = new HashMap<>();
+    dateDuration.put("startDate", "20220913");
+    dateDuration.put("endDate", "20220930");
+    formProperties.put("dateDuration", JsonCodec.instance().encode(dateDuration));
+
+    List<Map<String, String>> multiSelection = new ArrayList<>();
+    Map<String, String> multiSelection1 = new HashMap<>();
+    multiSelection1.put("id", "multiSelection1");
+    multiSelection1.put("name", "multiSelection1");
+    multiSelection.add(multiSelection1);
+    Map<String, String> multiSelection2 = new HashMap<>();
+    multiSelection2.put("id", "multiSelection2");
+    multiSelection2.put("name", "multiSelection2");
+    multiSelection.add(multiSelection2);
+    formProperties.put("multiSelection", JsonCodec.instance().encode(multiSelection));
+
+    List<Map<String, String>> singleSelection = new ArrayList<>();
+    Map<String, String> singleSelection1 = new HashMap<>();
+    singleSelection1.put("id", "singleSelection1");
+    singleSelection1.put("name", "singleSelection1");
+    singleSelection.add(singleSelection1);
+    formProperties.put("singleSelection", JsonCodec.instance().encode(singleSelection));
+
     ProcessInstance processInstance = formService.submitStartFormData(processDefinition.getId(), "my_business_key", formProperties);
 
     // 查询我的代办任务只有该请假流程的任务

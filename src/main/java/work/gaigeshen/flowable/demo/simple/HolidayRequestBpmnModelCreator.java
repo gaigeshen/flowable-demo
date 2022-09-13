@@ -53,6 +53,44 @@ public class HolidayRequestBpmnModelCreator {
         nrOfHolidaysProperty.setWriteable(true);
         nrOfHolidaysProperty.setRequired(true);
 
+        FormProperty dateDurationProperty = new FormProperty();
+        dateDurationProperty.setId("dateDuration");
+        dateDurationProperty.setVariable("dateDuration");
+        dateDurationProperty.setType("dateDuration");
+        dateDurationProperty.setReadable(true);
+        dateDurationProperty.setWriteable(true);
+        dateDurationProperty.setRequired(true);
+
+        FormProperty multiSelectionProperty = new FormProperty();
+        multiSelectionProperty.setId("multiSelection");
+        multiSelectionProperty.setVariable("multiSelection");
+        multiSelectionProperty.setType("multiSelection");
+        multiSelectionProperty.setReadable(true);
+        multiSelectionProperty.setWriteable(true);
+        multiSelectionProperty.setRequired(true);
+        FormValue multiSelection1 = new FormValue();
+        multiSelection1.setId("multiSelection1");
+        multiSelection1.setName("multiSelection1");
+        FormValue multiSelection2 = new FormValue();
+        multiSelection2.setId("multiSelection2");
+        multiSelection2.setName("multiSelection2");
+        multiSelectionProperty.setFormValues(Arrays.asList(multiSelection1, multiSelection2));
+
+        FormProperty singleSelectionProperty = new FormProperty();
+        singleSelectionProperty.setId("singleSelection");
+        singleSelectionProperty.setVariable("singleSelection");
+        singleSelectionProperty.setType("singleSelection");
+        singleSelectionProperty.setReadable(true);
+        singleSelectionProperty.setWriteable(true);
+        singleSelectionProperty.setRequired(true);
+        FormValue singleSelection1 = new FormValue();
+        singleSelection1.setId("singleSelection1");
+        singleSelection1.setName("singleSelection1");
+        FormValue singleSelection2 = new FormValue();
+        singleSelection2.setId("singleSelection2");
+        singleSelection2.setName("singleSelection2");
+        singleSelectionProperty.setFormValues(Arrays.asList(singleSelection1, singleSelection2));
+
         FormProperty descriptionProperty = new FormProperty();
         descriptionProperty.setId("description");
         descriptionProperty.setVariable("description");
@@ -61,7 +99,9 @@ public class HolidayRequestBpmnModelCreator {
         descriptionProperty.setWriteable(true);
         descriptionProperty.setRequired(false);
 
-        startEvent.setFormProperties(Arrays.asList(employeeProperty, typeProperty, nrOfHolidaysProperty, descriptionProperty));
+        startEvent.setFormProperties(Arrays.asList(employeeProperty, typeProperty, nrOfHolidaysProperty,
+                dateDurationProperty, multiSelectionProperty, singleSelectionProperty,
+                descriptionProperty));
         process.addFlowElement(startEvent);
 
         UserTask approveTask = new UserTask();
@@ -78,10 +118,21 @@ public class HolidayRequestBpmnModelCreator {
         FormProperty nrOfHolidaysPropertyClone1 = nrOfHolidaysProperty.clone();
         nrOfHolidaysPropertyClone1.setWriteable(false);
 
+        FormProperty dateDurationProperty1 = dateDurationProperty.clone();
+        dateDurationProperty1.setWriteable(false);
+
+        FormProperty multiSelectionProperty1 = multiSelectionProperty.clone();
+        multiSelectionProperty1.setWriteable(false);
+
+        FormProperty singleSelectionProperty1 = singleSelectionProperty.clone();
+        singleSelectionProperty1.setWriteable(false);
+
         FormProperty descriptionPropertyClone1 = descriptionProperty.clone();
         descriptionPropertyClone1.setWriteable(false);
 
-        approveTask.setFormProperties(Arrays.asList(employeePropertyClone1, typePropertyClone1, nrOfHolidaysPropertyClone1, descriptionPropertyClone1));
+        approveTask.setFormProperties(Arrays.asList(employeePropertyClone1, typePropertyClone1, nrOfHolidaysPropertyClone1,
+                dateDurationProperty1, multiSelectionProperty1, singleSelectionProperty1,
+                descriptionPropertyClone1));
         process.addFlowElement(approveTask);
 
         ExclusiveGateway decision = new ExclusiveGateway();
@@ -109,7 +160,9 @@ public class HolidayRequestBpmnModelCreator {
         holidayApprovedTask.setName("Holiday approved");
         holidayApprovedTask.setAssignee("${employee}");
 
-        holidayApprovedTask.setFormProperties(Arrays.asList(employeePropertyClone1, typePropertyClone1, nrOfHolidaysPropertyClone1, descriptionPropertyClone1));
+        holidayApprovedTask.setFormProperties(Arrays.asList(employeePropertyClone1, typePropertyClone1, nrOfHolidaysPropertyClone1,
+                dateDurationProperty1, multiSelectionProperty1, singleSelectionProperty1,
+                descriptionPropertyClone1));
         process.addFlowElement(holidayApprovedTask);
 
         EndEvent approveEnd = new EndEvent();
