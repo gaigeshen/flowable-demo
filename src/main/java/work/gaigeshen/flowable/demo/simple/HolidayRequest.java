@@ -105,6 +105,8 @@ public class HolidayRequest {
     TaskService taskService = processEngine.getTaskService();
     Task task = taskService.createTaskQuery().taskCandidateGroup("managers").singleResult();
 
+    taskService.setAssignee(task.getId(), "manager1");
+
     // 查询任务中的变量和表单数据
     // 因为表单的数据绑定了流程变量所以这里表单的数据和流程变量的数据相同
     Map<String, Object> processVariables = taskService.getVariables(task.getId());
