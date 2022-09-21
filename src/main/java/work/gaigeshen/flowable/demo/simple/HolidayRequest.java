@@ -25,10 +25,10 @@ public class HolidayRequest {
   public static void main(String[] args) {
     // 配置流程引擎使用的数据库和构建流程引擎
     StandaloneProcessEngineConfiguration cfg = new StandaloneProcessEngineConfiguration();
-    cfg.setJdbcUrl("jdbc:mysql://192.168.1.140/unify-platform");
+    cfg.setJdbcUrl("jdbc:mysql:///demo");
     cfg.setJdbcDriver("com.mysql.cj.jdbc.Driver");
-    cfg.setJdbcUsername("dev");
-    cfg.setJdbcPassword("dev@aek.com");
+    cfg.setJdbcUsername("root");
+    cfg.setJdbcPassword("123456");
     cfg.setDatabaseSchemaUpdate("true");
 
     cfg.setCustomFormTypes(Arrays.asList(SingleSelectionFormType.INSTANCE, MultiSelectionFormType.INSTANCE,
